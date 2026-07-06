@@ -1,0 +1,40 @@
+package com.foodapp.controller;
+
+import java.io.IOException;
+import java.util.List;
+
+import com.foodapp.dao.MenuDAO;
+import com.foodapp.dao.impl.MenuDAOImpl;
+import com.foodapp.model.Menu;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@WebServlet("/menu")
+public class MenuServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
+
+    // Create MenuDAO object
+    MenuDAO menuDAO = new MenuDAOImpl();
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // Get restaurantId from URL
+        int restaurantId = Integer.parseInt(request.getParameter("restaurantId"));
+
+        // Get menu items from database
+        List<Menu> menuList = menuDAO.getAllMenusByRestaurant(restaurantId);
+
+        // Send menu list to JSP
+        request.setAttribute("menuList", menuList);
+
+        // Open menu.jsp
+        request.getRequestDispatcher("menu.jsp").forward(request, response);
+    }
+}
